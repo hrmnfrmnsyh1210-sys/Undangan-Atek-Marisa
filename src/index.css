@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif+TC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+@theme {
+  --color-chinese-red: #A31621;
+  --color-chinese-red-light: #C21A27;
+  --color-chinese-red-dark: #82111A;
+  --color-chinese-gold: #F1C40F;
+  --color-chinese-gold-light: #F4D03F;
+  --color-chinese-gold-dark: #D4AC0D;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-script: "Great Vibes", cursive;
+  --font-tc: "Noto Serif TC", serif;
+}
+
+body {
+  background-color: #2A0000;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.gold-gradient-text {
+  background: linear-gradient(to right, #B8860B, #E5C270, #FFF8DC, #E5C270, #B8860B);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shine 4s linear infinite;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #B8860B, #E5C270, #FFF8DC, #E5C270, #B8860B);
+}
+
+.lux-card {
+  background: linear-gradient(145deg, rgba(92, 0, 0, 0.8) 0%, rgba(42, 0, 0, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(229, 194, 112, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(229, 194, 112, 0.05);
+}
+.lux-card:hover {
+  border-color: rgba(229, 194, 112, 0.6);
+  box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(229, 194, 112, 0.1);
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(10vh) translateX(0) rotate(-2deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-110vh) translateX(30px) rotate(2deg);
+    opacity: 0;
+  }
+}
+
+@keyframes swing {
+  from { transform: rotate3d(0, 0, 1, 6deg); }
+  to { transform: rotate3d(0, 0, 1, -6deg); }
+}
+
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 20px rgba(229,194,112,0.2), 0 0 40px rgba(229,194,112,0.1); }
+  50% { text-shadow: 0 0 30px rgba(229,194,112,0.6), 0 0 60px rgba(229,194,112,0.3); }
+}
+
