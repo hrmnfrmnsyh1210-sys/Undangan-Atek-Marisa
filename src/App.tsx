@@ -1,39 +1,41 @@
 import { useState, useRef, useEffect } from 'react';
+import YouTube, { YouTubeEvent, YouTubePlayer } from 'react-youtube';
 import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Calendar, Clock, Copy, Check, Gift, MailOpen, Music, VolumeX, BookHeart, Image as ImageIcon } from 'lucide-react';
 
 // Data placeholders based on user request
 const DATA = {
+  youtubeId: "92IYzmZ5u5Q",
   bride: {
-    nickname: "marisa",
-    fullName: "marisa ekawati",
-    parents: "anak kedua dr bapak stepanus abol dan ibu Maria satina",
+    nickname: "Marisa",
+    fullName: "Marisa Ekawati",
+    parents: "Anak kedua dari Bapak Stepanus Abol dan Ibu Maria Satina",
     image: "https://images.unsplash.com/photo-1545696563-af8f6ec36502?q=80&w=600&auto=format&fit=crop"
   },
   groom: {
-    nickname: "atek",
-    fullName: "suprianto,S.kom",
-    parents: "Anak kedua dr bapak lim mou tie dan ibu yo hui khiam",
+    nickname: "Atek",
+    fullName: "Suprianto, S.Kom",
+    parents: "Anak kedua dari Bapak Lim Mou Tie dan Ibu Yo Hui Khiam",
     image: "https://images.unsplash.com/photo-1627063231435-08e1a7e2b67f?q=80&w=600&auto=format&fit=crop"
   },
   tunangan: {
-    date: "jumat, 26.06.2026",
+    date: "Jumat, 26 Juni 2026",
     time: "Waktu menyesuaikan",
-    location: "sepok pangkalan",
+    location: "Sepok Pangkalan",
     mapsLink: "https://maps.app.goo.gl/V24rrbgYzxudkk1b6",
     label: "Tunangan",
   },
   akad: {
-    date: "senin, 06.07.2026",
-    time: "08.00 WIB",
-    location: "sepok pangkalan",
+    date: "Senin, 06 Juli 2026",
+    time: "08.00 WIB - Selesai",
+    location: "Sepok Pangkalan",
     mapsLink: "https://maps.app.goo.gl/v1TWMcmSqEy7KQx57",
     label: "Akad Nikah",
   },
   resepsi: {
-    date: "senin, 06.07.2026",
-    time: "14.00 WIB",
-    location: "sepok pangkalan",
+    date: "Senin, 06 Juli 2026",
+    time: "14.00 WIB - Selesai",
+    location: "Sepok Pangkalan",
     mapsLink: "https://maps.app.goo.gl/V24rrbgYzxudkk1b6",
   },
   virtualGift: [
@@ -189,19 +191,31 @@ export default function App() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [copiedBank, setCopiedBank] = useState<string | null>(null);
   
-  // Fake audio ref for UI purposes
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // YouTube player instance
+  const [ytPlayer, setYtPlayer] = useState<YouTubePlayer | null>(null);
+
+  // Get guest name from URL parameter ?to=Nama
+  const searchParams = new URLSearchParams(window.location.search);
+  const guestName = searchParams.get('to') || 'Tamu Undangan';
+
+  const onPlayerReady = (event: YouTubeEvent) => {
+    setYtPlayer(event.target);
+  };
 
   const handleOpen = () => {
     setIsOpen(true);
-    // In a real app, we would play audio here
-    // if (audioRef.current) audioRef.current.play();
+    if (ytPlayer) {
+      ytPlayer.playVideo();
+    }
   };
 
   const toggleAudio = () => {
+    if (isPlaying) {
+      ytPlayer?.pauseVideo();
+    } else {
+      ytPlayer?.playVideo();
+    }
     setIsPlaying(!isPlaying);
-    // if (isPlaying) audioRef.current?.pause();
-    // else audioRef.current?.play();
   };
 
   const copyToClipboard = (text: string) => {
@@ -216,7 +230,22 @@ export default function App() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] pattern-chinese z-0"></div>
       <FloatingSkyLanterns />
       
-      {/* Floating Audio Button */}
+      {/* Floating Audio Button & YouTube Embed */}
+      <div className="hidden">
+        <YouTube 
+          videoId={DATA.youtubeId} 
+          opts={{
+            height: '0',
+            width: '0',
+            playerVars: {
+              autoplay: 0,
+              loop: 1,
+              playlist: DATA.youtubeId,
+            },
+          }} 
+          onReady={onPlayerReady} 
+        />
+      </div>
       <AnimatePresence>
         {isOpen && (
           <motion.button
@@ -333,7 +362,12 @@ export default function App() {
                 transition={{ delay: 1.6, duration: 1 }}
                 className="flex flex-col items-center"
               >
-                <p className="font-serif italic text-lg md:text-xl mb-12 text-[#E5C270]/80">
+                <div className="mb-6 p-4 border border-[#B8860B]/30 rounded-xl bg-black/40 backdrop-blur-sm min-w-[280px]">
+                  <p className="text-[#E5C270]/80 text-[10px] md:text-xs tracking-widest uppercase mb-1">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+                  <p className="text-xl md:text-2xl font-serif text-white">{guestName}</p>
+                </div>
+
+                <p className="font-serif italic text-lg md:text-xl mb-8 text-[#E5C270]/80">
                   We invite you to celebrate with us
                 </p>
 
@@ -380,7 +414,7 @@ export default function App() {
               <p className="text-xs uppercase tracking-widest text-[#B8860B] mb-2">Mempelai Pria</p>
               <h2 className="text-2xl xl:text-3xl font-serif text-white mb-3">{DATA.groom.fullName}</h2>
               <div className="w-20 h-20 xl:w-24 xl:h-24 mx-auto rounded-full overflow-hidden mb-4 border-2 border-[#B8860B] shrink-0">
-                <img src={DATA.groom.image} alt="Groom" className="w-full h-full object-cover grayscale-[30%] sepia-[20%] group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105" />
+                <img src={DATA.groom.image} alt="Groom" referrerPolicy="no-referrer" className="w-full h-full object-cover grayscale-[30%] sepia-[20%] group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105" />
               </div>
               <div className="w-12 h-[1px] bg-[#B8860B] mx-auto mb-3 shrink-0"></div>
               <p className="text-[11px] xl:text-xs leading-relaxed text-[#E5C270]/90 italic">{DATA.groom.parents}</p>
@@ -398,7 +432,7 @@ export default function App() {
               <p className="text-xs uppercase tracking-widest text-[#B8860B] mb-2">Mempelai Wanita</p>
               <h2 className="text-2xl xl:text-3xl font-serif text-white mb-3">{DATA.bride.fullName}</h2>
               <div className="w-20 h-20 xl:w-24 xl:h-24 mx-auto rounded-full overflow-hidden mb-4 border-2 border-[#B8860B] shrink-0">
-                <img src={DATA.bride.image} alt="Bride" className="w-full h-full object-cover grayscale-[30%] sepia-[20%] group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105" />
+                <img src={DATA.bride.image} alt="Bride" referrerPolicy="no-referrer" className="w-full h-full object-cover grayscale-[30%] sepia-[20%] group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105" />
               </div>
               <div className="w-12 h-[1px] bg-[#B8860B] mx-auto mb-3 shrink-0"></div>
               <p className="text-[11px] xl:text-xs leading-relaxed text-[#E5C270]/90 italic">{DATA.bride.parents}</p>
@@ -464,7 +498,8 @@ export default function App() {
                 <span className="text-lg xl:text-xl">🏮</span>
                 <h3 className="text-xs xl:text-sm font-bold tracking-widest uppercase text-[#E5C270]">{DATA.akad.label}</h3>
               </div>
-              <p className="text-xl xl:text-2xl font-serif text-white mb-2">{DATA.akad.time}</p>
+              <p className="text-xl xl:text-2xl font-serif text-white">{DATA.akad.date}</p>
+              <p className="text-sm xl:text-base font-serif text-white/80 mb-2">{DATA.akad.time}</p>
               <p className="text-[11px] xl:text-xs leading-relaxed opacity-90 text-[#E5C270] mb-4">{DATA.akad.location}</p>
               <div className="mt-auto pt-4 border-t border-[#B8860B]/20">
                 {DATA.akad.mapsLink && (
@@ -488,7 +523,8 @@ export default function App() {
                 <span className="text-lg xl:text-xl">💮</span>
                 <h3 className="text-xs xl:text-sm font-bold tracking-widest uppercase text-[#E5C270]">Resepsi</h3>
               </div>
-              <p className="text-xl xl:text-2xl font-serif text-white mb-2">{DATA.resepsi.time}</p>
+              <p className="text-xl xl:text-2xl font-serif text-white">{DATA.resepsi.date}</p>
+              <p className="text-sm xl:text-base font-serif text-white/80 mb-2">{DATA.resepsi.time}</p>
               <p className="text-[11px] xl:text-xs leading-relaxed opacity-90 text-[#E5C270] mb-4">{DATA.resepsi.location}</p>
               <div className="mt-auto pt-4 border-t border-[#B8860B]/20">
                 {DATA.resepsi.mapsLink && (
@@ -565,7 +601,7 @@ export default function App() {
                 {DATA.gallery.slice(0, 4).map((url, i) => (
                   <div key={i} className="w-full h-full overflow-hidden rounded-xl border border-[#B8860B]/20 relative group bg-[#5C0000]">
                     <div className="absolute inset-0 bg-[#5C0000]/20 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
-                    <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover grayscale-[20%] sepia-[10%] group-hover:grayscale-0 transition-transform duration-700 group-hover:scale-110" />
+                    <img src={url} alt={`Gallery ${i}`} referrerPolicy="no-referrer" className="w-full h-full object-cover grayscale-[20%] sepia-[10%] group-hover:grayscale-0 transition-transform duration-700 group-hover:scale-110" />
                   </div>
                 ))}
               </div>
