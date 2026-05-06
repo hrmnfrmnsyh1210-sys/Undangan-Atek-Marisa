@@ -5,7 +5,7 @@ import { MapPin, Calendar, Clock, Copy, Check, Gift, MailOpen, Music, VolumeX, B
 
 // Data placeholders based on user request
 const DATA = {
-  youtubeId: "92IYzmZ5u5Q",
+  youtubeId: "zeip_QOwnAw",
   bride: {
     nickname: "Marisa",
     fullName: "Marisa Ekawati",
